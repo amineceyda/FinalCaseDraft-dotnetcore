@@ -19,7 +19,7 @@ namespace SiteManangmentAPI.Data.Migrations
                 schema: "dbo",
                 columns: table => new
                 {
-                    UserId = table.Column<int>(type: "int", nullable: false)
+                    Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Username = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
                     Password = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
@@ -30,12 +30,12 @@ namespace SiteManangmentAPI.Data.Migrations
                     TCNo = table.Column<string>(type: "nvarchar(11)", maxLength: 11, nullable: false),
                     VehiclePlateNumber = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: true),
                     IsActive = table.Column<bool>(type: "bit", nullable: false),
-                    RegistrationDate = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    LastLoginDate = table.Column<DateTime>(type: "datetime2", nullable: false)
+                    InsertTime = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    UpdateTime = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Users", x => x.UserId);
+                    table.PrimaryKey("PK_Users", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -43,7 +43,7 @@ namespace SiteManangmentAPI.Data.Migrations
                 schema: "dbo",
                 columns: table => new
                 {
-                    ApartmentId = table.Column<int>(type: "int", nullable: false)
+                    Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     OwnerUserID = table.Column<int>(type: "int", nullable: false),
                     TenantUserID = table.Column<int>(type: "int", nullable: false),
@@ -51,24 +51,26 @@ namespace SiteManangmentAPI.Data.Migrations
                     Status = table.Column<int>(type: "int", nullable: false),
                     Type = table.Column<int>(type: "int", nullable: false),
                     Floor = table.Column<int>(type: "int", nullable: false),
-                    ApartmentNumber = table.Column<string>(type: "nvarchar(10)", maxLength: 10, nullable: false)
+                    ApartmentNumber = table.Column<string>(type: "nvarchar(10)", maxLength: 10, nullable: false),
+                    InsertTime = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    UpdateTime = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Apartments", x => x.ApartmentId);
+                    table.PrimaryKey("PK_Apartments", x => x.Id);
                     table.ForeignKey(
                         name: "FK_Apartments_Users_OwnerUserID",
                         column: x => x.OwnerUserID,
                         principalSchema: "dbo",
                         principalTable: "Users",
-                        principalColumn: "UserId",
+                        principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_Apartments_Users_TenantUserID",
                         column: x => x.TenantUserID,
                         principalSchema: "dbo",
                         principalTable: "Users",
-                        principalColumn: "UserId",
+                        principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                 });
 
@@ -77,22 +79,24 @@ namespace SiteManangmentAPI.Data.Migrations
                 schema: "dbo",
                 columns: table => new
                 {
-                    ContactID = table.Column<int>(type: "int", nullable: false)
+                    Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     UserID = table.Column<int>(type: "int", nullable: false),
                     ContactName = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     ContactPhone = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false),
-                    ContactEmail = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false)
+                    ContactEmail = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
+                    InsertTime = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    UpdateTime = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Contacts", x => x.ContactID);
+                    table.PrimaryKey("PK_Contacts", x => x.Id);
                     table.ForeignKey(
                         name: "FK_Contacts_Users_UserID",
                         column: x => x.UserID,
                         principalSchema: "dbo",
                         principalTable: "Users",
-                        principalColumn: "UserId",
+                        principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                 });
 
@@ -101,30 +105,31 @@ namespace SiteManangmentAPI.Data.Migrations
                 schema: "dbo",
                 columns: table => new
                 {
-                    MessageID = table.Column<int>(type: "int", nullable: false)
+                    Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     SenderUserID = table.Column<int>(type: "int", nullable: false),
                     ReceiverUserID = table.Column<int>(type: "int", nullable: false),
                     MessageContent = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     IsRead = table.Column<bool>(type: "bit", nullable: false),
-                    DateSent = table.Column<DateTime>(type: "datetime2", nullable: false)
+                    InsertTime = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    UpdateTime = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Messages", x => x.MessageID);
+                    table.PrimaryKey("PK_Messages", x => x.Id);
                     table.ForeignKey(
                         name: "FK_Messages_Users_ReceiverUserID",
                         column: x => x.ReceiverUserID,
                         principalSchema: "dbo",
                         principalTable: "Users",
-                        principalColumn: "UserId",
+                        principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_Messages_Users_SenderUserID",
                         column: x => x.SenderUserID,
                         principalSchema: "dbo",
                         principalTable: "Users",
-                        principalColumn: "UserId",
+                        principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                 });
 
@@ -133,22 +138,24 @@ namespace SiteManangmentAPI.Data.Migrations
                 schema: "dbo",
                 columns: table => new
                 {
-                    BillingID = table.Column<int>(type: "int", nullable: false)
+                    Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     ApartmentID = table.Column<int>(type: "int", nullable: false),
                     BillingDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     BillAmount = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
-                    RentAmount = table.Column<decimal>(type: "decimal(18,2)", nullable: false)
+                    RentAmount = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    InsertTime = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    UpdateTime = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Billing", x => x.BillingID);
+                    table.PrimaryKey("PK_Billing", x => x.Id);
                     table.ForeignKey(
                         name: "FK_Billing_Apartments_ApartmentID",
                         column: x => x.ApartmentID,
                         principalSchema: "dbo",
                         principalTable: "Apartments",
-                        principalColumn: "ApartmentId",
+                        principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                 });
 
@@ -157,30 +164,31 @@ namespace SiteManangmentAPI.Data.Migrations
                 schema: "dbo",
                 columns: table => new
                 {
-                    PaymentID = table.Column<int>(type: "int", nullable: false)
+                    Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     UserID = table.Column<int>(type: "int", nullable: false),
                     BillingID = table.Column<int>(type: "int", nullable: false),
-                    PaymentDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     PaidAmount = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
-                    PaymentMethod = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false)
+                    PaymentMethod = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false),
+                    InsertTime = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    UpdateTime = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Payments", x => x.PaymentID);
+                    table.PrimaryKey("PK_Payments", x => x.Id);
                     table.ForeignKey(
                         name: "FK_Payments_Billing_BillingID",
                         column: x => x.BillingID,
                         principalSchema: "dbo",
                         principalTable: "Billing",
-                        principalColumn: "BillingID",
+                        principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_Payments_Users_UserID",
                         column: x => x.UserID,
                         principalSchema: "dbo",
                         principalTable: "Users",
-                        principalColumn: "UserId",
+                        principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                 });
 

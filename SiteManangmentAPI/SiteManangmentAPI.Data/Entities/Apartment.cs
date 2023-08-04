@@ -3,14 +3,14 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Microsoft.EntityFrameworkCore;
 using SiteManangmentAPI.Base.Enums;
 using System.ComponentModel.DataAnnotations.Schema;
+using SiteManangmentAPI.Base.BaseEntities;
 
 namespace SiteManangmentAPI.Data.Entities;
 
 [Table("Apartments", Schema = "dbo")]
-public class Apartment
+public class Apartment : BaseEntity
 {
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-    public int ApartmentId { get; set; }
     public int OwnerUserID { get; set; } // Foreign Key to Users 
     public int TenantUserID { get; set; } // Foreign Key to Users 
 
@@ -35,14 +35,15 @@ public class ApartmentConfiguration : IEntityTypeConfiguration<Apartment>
     {
         builder.ToTable("Apartments", "dbo");
 
-        builder.Property(a => a.ApartmentId).IsRequired(true).UseIdentityColumn();
-        builder.Property(a => a.OwnerUserID).IsRequired();
-        builder.Property(a => a.TenantUserID).IsRequired();
-        builder.Property(a => a.Block).IsRequired().HasMaxLength(100);
-        builder.Property(a => a.Status).IsRequired();
-        builder.Property(a => a.Type).IsRequired();       
-        builder.Property(a => a.Floor).IsRequired();
-        builder.Property(a => a.ApartmentNumber).IsRequired().HasMaxLength(10);
+        builder.Property(a => a.Id).IsRequired(true).UseIdentityColumn();
+        builder.Property(b => b.InsertTime).IsRequired(true);
+        builder.Property(a => a.OwnerUserID).IsRequired(true);
+        builder.Property(a => a.TenantUserID).IsRequired(true);
+        builder.Property(a => a.Block).IsRequired(true).HasMaxLength(100);
+        builder.Property(a => a.Status).IsRequired(true);
+        builder.Property(a => a.Type).IsRequired(true);       
+        builder.Property(a => a.Floor).IsRequired(true);
+        builder.Property(a => a.ApartmentNumber).IsRequired(true).HasMaxLength(10);
                  
 
         // index

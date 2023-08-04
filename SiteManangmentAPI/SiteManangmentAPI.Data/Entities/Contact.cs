@@ -2,14 +2,13 @@
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations.Schema;
+using SiteManangmentAPI.Base.BaseEntities;
 
 namespace SiteManangmentAPI.Data.Entities;
 
 [Table("Contacts", Schema = "dbo")]
-public class Contact
+public class Contact : BaseEntity
 {
-    [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-    public int ContactID { get; set; } // Primary Key
     public int UserID { get; set; } // Foreign Key to Users
 
     public string ContactName { get; set; }
@@ -27,11 +26,12 @@ public class ContactConfiguration : IEntityTypeConfiguration<Contact>
         builder.ToTable("Contacts", "dbo");
 
         // Set the primary key
-        builder.Property(c => c.ContactID).IsRequired(true).UseIdentityColumn();
-        builder.Property(c => c.UserID).IsRequired();
-        builder.Property(c => c.ContactName).IsRequired().HasMaxLength(100);
+        builder.Property(c => c.Id).IsRequired(true).UseIdentityColumn();
+        builder.Property(c => c.InsertTime).IsRequired(true);
+        builder.Property(c => c.UserID).IsRequired(true);
+        builder.Property(c => c.ContactName).IsRequired(true).HasMaxLength(100);
         builder.Property(c => c.ContactPhone).IsRequired().HasMaxLength(20);
-        builder.Property(c => c.ContactEmail).IsRequired().HasMaxLength(100);
+        builder.Property(c => c.ContactEmail).IsRequired(true).HasMaxLength(100);
 
         //relationships
         builder.HasOne(c => c.User) 

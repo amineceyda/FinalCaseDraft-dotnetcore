@@ -12,7 +12,7 @@ using SiteManangmentAPI.Data.DBContext;
 namespace SiteManangmentAPI.Data.Migrations
 {
     [DbContext(typeof(SimDbContext))]
-    [Migration("20230803012340_SeedData")]
+    [Migration("20230804230358_SeedData")]
     partial class SeedData
     {
         /// <inheritdoc />
@@ -27,11 +27,11 @@ namespace SiteManangmentAPI.Data.Migrations
 
             modelBuilder.Entity("SiteManangmentAPI.Data.Entities.Apartment", b =>
                 {
-                    b.Property<int>("ApartmentId")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ApartmentId"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("ApartmentNumber")
                         .IsRequired()
@@ -46,7 +46,11 @@ namespace SiteManangmentAPI.Data.Migrations
                     b.Property<int>("Floor")
                         .HasColumnType("int");
 
+                    b.Property<DateTime>("InsertTime")
+                        .HasColumnType("datetime2");
+
                     b.Property<int>("OwnerUserID")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
                     b.Property<int>("Status")
@@ -58,7 +62,10 @@ namespace SiteManangmentAPI.Data.Migrations
                     b.Property<int>("Type")
                         .HasColumnType("int");
 
-                    b.HasKey("ApartmentId");
+                    b.Property<DateTime>("UpdateTime")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
 
                     b.HasIndex("ApartmentNumber")
                         .IsUnique();
@@ -72,11 +79,11 @@ namespace SiteManangmentAPI.Data.Migrations
 
             modelBuilder.Entity("SiteManangmentAPI.Data.Entities.Billing", b =>
                 {
-                    b.Property<int>("BillingID")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("BillingID"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<int>("ApartmentID")
                         .HasColumnType("int");
@@ -87,10 +94,16 @@ namespace SiteManangmentAPI.Data.Migrations
                     b.Property<DateTime>("BillingDate")
                         .HasColumnType("datetime2");
 
+                    b.Property<DateTime>("InsertTime")
+                        .HasColumnType("datetime2");
+
                     b.Property<decimal>("RentAmount")
                         .HasColumnType("decimal(18,2)");
 
-                    b.HasKey("BillingID");
+                    b.Property<DateTime>("UpdateTime")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
 
                     b.HasIndex("ApartmentID");
 
@@ -99,11 +112,11 @@ namespace SiteManangmentAPI.Data.Migrations
 
             modelBuilder.Entity("SiteManangmentAPI.Data.Entities.Contact", b =>
                 {
-                    b.Property<int>("ContactID")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ContactID"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("ContactEmail")
                         .IsRequired()
@@ -120,10 +133,16 @@ namespace SiteManangmentAPI.Data.Migrations
                         .HasMaxLength(20)
                         .HasColumnType("nvarchar(20)");
 
+                    b.Property<DateTime>("InsertTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("UpdateTime")
+                        .HasColumnType("datetime2");
+
                     b.Property<int>("UserID")
                         .HasColumnType("int");
 
-                    b.HasKey("ContactID");
+                    b.HasKey("Id");
 
                     b.HasIndex("UserID");
 
@@ -132,13 +151,13 @@ namespace SiteManangmentAPI.Data.Migrations
 
             modelBuilder.Entity("SiteManangmentAPI.Data.Entities.Message", b =>
                 {
-                    b.Property<int>("MessageID")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("MessageID"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<DateTime>("DateSent")
+                    b.Property<DateTime>("InsertTime")
                         .HasColumnType("datetime2");
 
                     b.Property<bool>("IsRead")
@@ -154,7 +173,10 @@ namespace SiteManangmentAPI.Data.Migrations
                     b.Property<int>("SenderUserID")
                         .HasColumnType("int");
 
-                    b.HasKey("MessageID");
+                    b.Property<DateTime>("UpdateTime")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
 
                     b.HasIndex("ReceiverUserID");
 
@@ -165,30 +187,33 @@ namespace SiteManangmentAPI.Data.Migrations
 
             modelBuilder.Entity("SiteManangmentAPI.Data.Entities.Payment", b =>
                 {
-                    b.Property<int>("PaymentID")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("PaymentID"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<int>("BillingID")
                         .HasColumnType("int");
 
+                    b.Property<DateTime>("InsertTime")
+                        .HasColumnType("datetime2");
+
                     b.Property<decimal>("PaidAmount")
                         .HasColumnType("decimal(18,2)");
-
-                    b.Property<DateTime>("PaymentDate")
-                        .HasColumnType("datetime2");
 
                     b.Property<string>("PaymentMethod")
                         .IsRequired()
                         .HasMaxLength(20)
                         .HasColumnType("nvarchar(20)");
 
+                    b.Property<DateTime>("UpdateTime")
+                        .HasColumnType("datetime2");
+
                     b.Property<int>("UserID")
                         .HasColumnType("int");
 
-                    b.HasKey("PaymentID");
+                    b.HasKey("Id");
 
                     b.HasIndex("BillingID");
 
@@ -199,11 +224,11 @@ namespace SiteManangmentAPI.Data.Migrations
 
             modelBuilder.Entity("SiteManangmentAPI.Data.Entities.User", b =>
                 {
-                    b.Property<int>("UserId")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("UserId"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Email")
                         .IsRequired()
@@ -215,11 +240,11 @@ namespace SiteManangmentAPI.Data.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
+                    b.Property<DateTime>("InsertTime")
+                        .HasColumnType("datetime2");
+
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
-
-                    b.Property<DateTime>("LastLoginDate")
-                        .HasColumnType("datetime2");
 
                     b.Property<string>("LastName")
                         .IsRequired()
@@ -231,13 +256,13 @@ namespace SiteManangmentAPI.Data.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
-                    b.Property<DateTime>("RegistrationDate")
-                        .HasColumnType("datetime2");
-
                     b.Property<string>("TCNo")
                         .IsRequired()
                         .HasMaxLength(11)
                         .HasColumnType("nvarchar(11)");
+
+                    b.Property<DateTime>("UpdateTime")
+                        .HasColumnType("datetime2");
 
                     b.Property<int>("UserType")
                         .HasColumnType("int");
@@ -251,7 +276,7 @@ namespace SiteManangmentAPI.Data.Migrations
                         .HasMaxLength(20)
                         .HasColumnType("nvarchar(20)");
 
-                    b.HasKey("UserId");
+                    b.HasKey("Id");
 
                     b.HasIndex("Username")
                         .IsUnique();

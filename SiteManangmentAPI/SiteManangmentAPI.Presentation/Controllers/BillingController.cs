@@ -43,7 +43,7 @@ public class BillingController : ControllerBase
     [HttpPut("{id}")]
     public ApiResponse UpdateBilling(int id, [FromBody] Billing request)
     {
-        request.BillingID = id;
+        request.Id = id;
         _repository.Update(request);
         return new ApiResponse();
     }

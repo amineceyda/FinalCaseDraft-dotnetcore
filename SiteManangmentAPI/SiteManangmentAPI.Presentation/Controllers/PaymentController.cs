@@ -43,7 +43,7 @@ public class PaymentController : ControllerBase
     [HttpPut("{id}")]
     public ApiResponse UpdatePayment(int id, [FromBody] Payment request)
     {
-        request.PaymentID = id;
+        request.Id= id;
         _repository.Update(request);
         return new ApiResponse();
     }

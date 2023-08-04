@@ -43,7 +43,7 @@ public class ApartmentController : ControllerBase
     [HttpPut("{id}")]
     public ApiResponse UpdateApartment(int id, [FromBody] Apartment request)
     {
-        request.ApartmentId = id;
+        request.Id = id;
         _repository.Update(request);
         return new ApiResponse();
     }

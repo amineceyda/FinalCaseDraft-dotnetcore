@@ -1,8 +1,9 @@
-﻿using SiteManangmentAPI.Data.DBContext;
+﻿using SiteManangmentAPI.Base.BaseEntities;
+using SiteManangmentAPI.Data.DBContext;
 
 namespace SiteManangmentAPI.Data.Repository.BaseRepository;
 
-public class GenericRepository<Entity> : IGenericRepository<Entity> where Entity : class
+public class GenericRepository<Entity> : IGenericRepository<Entity> where Entity : BaseEntity
 {
     private readonly SimDbContext _dbContext;
     public GenericRepository(SimDbContext dbContext)
@@ -16,6 +17,7 @@ public class GenericRepository<Entity> : IGenericRepository<Entity> where Entity
     }
     public void Delete(Entity entity)
     {
+        entity.UpdateTime = DateTime.Now;
         _dbContext.Set<Entity>().Remove(entity);
 
     }
@@ -24,6 +26,7 @@ public class GenericRepository<Entity> : IGenericRepository<Entity> where Entity
     {
         var entity = _dbContext.Set<Entity>().Find(id);
         Delete(entity);
+        
     }
 
     public List<Entity> GetAll()
@@ -44,11 +47,13 @@ public class GenericRepository<Entity> : IGenericRepository<Entity> where Entity
 
     public void Insert(Entity entity)
     {
+        entity.InsertTime = DateTime.Now;
         _dbContext.Set<Entity>().Add(entity);
     }
 
     public void Update(Entity entity)
     {
+        entity.UpdateTime = DateTime.Now;
         _dbContext.Set<Entity>().Update(entity);
     }
 }

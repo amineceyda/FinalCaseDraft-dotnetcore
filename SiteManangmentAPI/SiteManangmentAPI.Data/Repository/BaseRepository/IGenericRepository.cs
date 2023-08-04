@@ -1,7 +1,9 @@
 ﻿
+using SiteManangmentAPI.Base.BaseEntities;
+
 namespace SiteManangmentAPI.Data.Repository.BaseRepository;
 
-public interface IGenericRepository<Entity> where Entity : class //dinamik kodlama
+public interface IGenericRepository<Entity> where Entity : BaseEntity //dinamik kodlama
 {
     void Save();
     Entity GetById(int id);

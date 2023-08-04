@@ -1,21 +1,22 @@
 ﻿using Microsoft.EntityFrameworkCore.Migrations;
+using SiteManangmentAPI.Base.Enums;
+using SiteManangmentAPI.Data.Entities;
+using System;
 
 #nullable disable
 
 namespace SiteManangmentAPI.Data.Migrations
 {
-    /// <inheritdoc />
     public partial class SeedData : Migration
     {
-        /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-
+            
         }
 
-        /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
+          
 
         }
     }

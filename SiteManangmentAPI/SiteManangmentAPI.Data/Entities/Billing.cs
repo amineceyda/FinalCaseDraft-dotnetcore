@@ -2,14 +2,13 @@
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations.Schema;
+using SiteManangmentAPI.Base.BaseEntities;
 
 namespace SiteManangmentAPI.Data.Entities;
 
 [Table("Billing", Schema = "dbo")]
-public class Billing
+public class Billing : BaseEntity
 {
-    [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-    public int BillingID { get; set; } // Primary Key
     public int ApartmentID { get; set; } // Foreign Key
 
     public DateTime BillingDate { get; set; }
@@ -30,7 +29,8 @@ public class BillingConfiguration : IEntityTypeConfiguration<Billing>
     {
         builder.ToTable("Billing", "dbo");
 
-        builder.Property(b => b.BillingID).IsRequired(true).UseIdentityColumn();
+        builder.Property(b => b.Id).IsRequired(true).UseIdentityColumn();
+        builder.Property(b => b.InsertTime).IsRequired(true);
         builder.Property(b => b.ApartmentID).IsRequired(true);
         builder.Property(b => b.BillingDate).IsRequired(true);
         builder.Property(b => b.BillAmount).IsRequired(true);

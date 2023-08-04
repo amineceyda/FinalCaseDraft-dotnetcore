@@ -42,7 +42,7 @@ namespace SiteManangmentAPI.Presentation.Controllers
         [HttpPut("{id}")]
         public ApiResponse UpdateUser(int id, [FromBody] User request)
         {
-            request.UserId = id;
+            request.Id = id;
             _repository.Update(request);
             return new ApiResponse();
         }

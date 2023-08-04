@@ -42,7 +42,7 @@ public class MessageController : ControllerBase
     [HttpPut("{id}")]
     public ApiResponse UpdateMessage(int id, [FromBody] Message request)
     {
-        request.MessageID= id;
+        request.Id= id;
         _repository.Update(request);
         return new ApiResponse();
     }

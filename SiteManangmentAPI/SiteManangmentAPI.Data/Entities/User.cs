@@ -2,15 +2,13 @@
 using Microsoft.EntityFrameworkCore;
 using SiteManangmentAPI.Base.Enums;
 using System.ComponentModel.DataAnnotations.Schema;
+using SiteManangmentAPI.Base.BaseEntities;
 
 namespace SiteManangmentAPI.Data.Entities;
 
 [Table("Users", Schema = "dbo")]
-public class User
+public class User : BaseEntity
 {
-    [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-    public int UserId { get; set; } // Primary Key
-
     public string Username { get; set; }
     public string Password { get; set; }
     public UserType UserType { get; set; } //enum
@@ -20,10 +18,8 @@ public class User
     public string Email { get; set; }
     public string TCNo { get; set; } //11
     public string VehiclePlateNumber { get; set; }
-   
-    public bool IsActive { get; set; } //to Track User
-    public DateTime RegistrationDate { get; set; }
-    public DateTime LastLoginDate { get; set; }
+
+    public bool IsActive { get; set; } = true; //to Track User
 
     public virtual List<Apartment> OwnedApartments { get; set; }
     public virtual List<Apartment> TenantedApartments { get; set; }
@@ -41,15 +37,17 @@ public class UserConfiguration : IEntityTypeConfiguration<User>
     {
         builder.ToTable("Users", "dbo");
 
-        builder.Property(u => u.UserId).IsRequired(true).UseIdentityColumn();
-        builder.Property(u => u.Username).IsRequired().HasMaxLength(50);
-        builder.Property(u => u.Password).IsRequired().HasMaxLength(100);
-        builder.Property(u => u.UserType).IsRequired();
-        builder.Property(u => u.FirstName).IsRequired().HasMaxLength(100);
-        builder.Property(u => u.LastName).IsRequired().HasMaxLength(100);
-        builder.Property(u => u.Email).IsRequired().HasMaxLength(100);
-        builder.Property(u => u.TCNo).IsRequired().HasMaxLength(11);
+        builder.Property(u => u.Id).IsRequired(true).UseIdentityColumn();
+        builder.Property(u => u.InsertTime).IsRequired(true);
+        builder.Property(u => u.Username).IsRequired(true).HasMaxLength(50);
+        builder.Property(u => u.Password).IsRequired(true).HasMaxLength(100);
+        builder.Property(u => u.UserType).IsRequired(true);
+        builder.Property(u => u.FirstName).IsRequired(true).HasMaxLength(100);
+        builder.Property(u => u.LastName).IsRequired(true).HasMaxLength(100);
+        builder.Property(u => u.Email).IsRequired(true).HasMaxLength(100);
+        builder.Property(u => u.TCNo).IsRequired(true).HasMaxLength(11);
         builder.Property(u => u.VehiclePlateNumber).IsRequired(false).HasMaxLength(20);
+        builder.Property(u => u.IsActive).IsRequired();
 
         //index
         builder.HasIndex(u => u.Username).IsUnique();

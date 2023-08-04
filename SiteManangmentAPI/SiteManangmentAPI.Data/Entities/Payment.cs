@@ -2,18 +2,16 @@
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations.Schema;
+using SiteManangmentAPI.Base.BaseEntities;
 
 namespace SiteManangmentAPI.Data.Entities;
 
 [Table("Payments", Schema = "dbo")]
-public class Payment
+public class Payment : BaseEntity
 {
-    [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-    public int PaymentID { get; set; } // Primary Key
     public int UserID { get; set; } // Foreign Key to user
     public int BillingID { get; set; } // Foreign Key to Billing
 
-    public DateTime PaymentDate { get; set; }
     public decimal PaidAmount { get; set; }
     public string PaymentMethod { get; set; } = "Credit card";
 
@@ -28,12 +26,12 @@ public class PaymentConfiguration : IEntityTypeConfiguration<Payment>
     {
         builder.ToTable("Payments", "dbo");
 
-        builder.Property(p => p.PaymentID).IsRequired(true).UseIdentityColumn();
-        builder.Property(p => p.UserID).IsRequired();
-        builder.Property(p => p.BillingID).IsRequired();
-        builder.Property(p => p.PaymentDate).IsRequired();
-        builder.Property(p => p.PaidAmount).IsRequired();
-        builder.Property(p => p.PaymentMethod).IsRequired().HasMaxLength(20);
+        builder.Property(p => p.Id).IsRequired(true).UseIdentityColumn();
+        builder.Property(p => p.InsertTime).IsRequired(true);
+        builder.Property(p => p.UserID).IsRequired(true);
+        builder.Property(p => p.BillingID).IsRequired(true);
+        builder.Property(p => p.PaidAmount).IsRequired(true);
+        builder.Property(p => p.PaymentMethod).IsRequired(true).HasMaxLength(20);
 
         //relationships
         builder.HasOne(p => p.User)

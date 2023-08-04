@@ -41,7 +41,7 @@ public class ContactController : ControllerBase
     [HttpPut("{id}")]
     public ApiResponse UpdateContact(int id, [FromBody] Contact request)
     {
-        request.ContactID = id;
+        request.Id = id;
         _repository.Update(request);
         return new ApiResponse();
     }
