@@ -1,11 +1,18 @@
 using Microsoft.EntityFrameworkCore;
 using SiteManangmentAPI.Data.DBContext;
+using SiteManangmentAPI.Data.Repository;
+using SiteManangmentAPI.Data.Repository.ApartmentRepository;
+using SiteManangmentAPI.Data.Repository.BillingRepository;
+using SiteManangmentAPI.Data.Repository.ContactRepository;
+using SiteManangmentAPI.Data.Repository.MessageRepository;
+using SiteManangmentAPI.Data.Repository.PaymentRepository;
+using SiteManangmentAPI.Data.Repository.UserRepository;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
-////dbContext
+//dbContext
 var dbType = builder.Configuration.GetConnectionString("DbType");
 if (dbType == "MsSql")
 {
@@ -13,7 +20,17 @@ if (dbType == "MsSql")
         options.UseSqlServer(builder.Configuration.GetConnectionString("MsSqlConnection")));
 }
 
+
+//Repository register
+builder.Services.AddScoped<IApartmentRepository, ApartmentRepository>();
+builder.Services.AddScoped<IBillingRepository, BillingRepository>();
+builder.Services.AddScoped<IContactRepository, ContactRepository>();
+builder.Services.AddScoped<IMessageRepository, MessageRepository>();
+builder.Services.AddScoped<IPaymentRepository, PaymentRepository>();
+builder.Services.AddScoped<IUserRepository, UserRepository>();
+
 builder.Services.AddControllers();
+
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
