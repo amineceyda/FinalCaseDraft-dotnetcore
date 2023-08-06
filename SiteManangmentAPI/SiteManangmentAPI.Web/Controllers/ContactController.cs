@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using SiteManangmentAPI.Application.Models;
 using SiteManangmentAPI.Base.Response;
+using SiteManangmentAPI.Business.Services;
 using SiteManangmentAPI.Data.Entities;
 using SiteManangmentAPI.Data.Repository;
 
@@ -11,57 +12,50 @@ namespace SiteManangmentAPI.Web.Controllers;
 [ApiController]
 public class ContactController : ControllerBase
 {
-    private readonly IContactRepository _repository;
+    private readonly IContactService _service;
     private readonly IMapper _mapper;
 
-    public ContactController(IContactRepository repository, IMapper mapper)
+    public ContactController(IMapper mapper, IContactService service)
     {
-        _repository = repository;
         _mapper = mapper;
+        _service = service;
     }
 
     [HttpGet]
     public ApiResponse<List<ContactResponse>> GetAllContacts()
     {
-        var entityList = _repository.GetAll();
-        var mapped = _mapper.Map<List<Contact>, List<ContactResponse>>(entityList);
-        return new ApiResponse<List<ContactResponse>>(mapped);
+        var response = _service.GetAll();
+        return response;
     }
 
     [HttpGet("{id}")]
     public ApiResponse<ContactResponse> GetContactDetails(int id)
     {
-        var entity = _repository.GetById(id);
-        var mapped = _mapper.Map<Contact, ContactResponse>(entity);
-        return new ApiResponse<ContactResponse>(mapped);
+        var response = _service.GetById(id);
+        return response;
     }
 
 
     [HttpPost]
     public ApiResponse AddContact([FromBody] ContactRequest request)
     {
-        var entity = _mapper.Map<ContactRequest, Contact>(request);
-        _repository.Insert(entity);
-        _repository.Save();
-        return new ApiResponse();
+        var response = _service.Insert(request);
+        return response;
 
     }
 
     [HttpPut("{id}")]
     public ApiResponse UpdateContact(int id, [FromBody] ContactRequest request)
     {
-        var entity = _mapper.Map<ContactRequest, Contact>(request);
-        entity.Id = id;
-        _repository.Update(entity);
-        _repository.Save();
-        return new ApiResponse();
+        var response = _service.Update(id, request);
+        return response;
     }
 
 
     [HttpDelete("{id}")]
     public ApiResponse DeleteContact(int id)
     {
-        _repository.DeleteById(id);
-        return new ApiResponse();
+        var response = _service.Delete(id);
+        return response;
     }
 }

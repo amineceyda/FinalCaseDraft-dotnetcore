@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using SiteManangmentAPI.Application.Models;
 using SiteManangmentAPI.Base.Response;
+using SiteManangmentAPI.Business.Services;
 using SiteManangmentAPI.Data.Entities;
 using SiteManangmentAPI.Data.Repository;
 
@@ -12,57 +13,50 @@ namespace SiteManangmentAPI.Web.Controllers;
 [ApiController]
 public class BillingController : ControllerBase
 {
-    private readonly IBillingRepository _repository;
+    private readonly IBillingService _service;
     private readonly IMapper _mapper;
 
-    public BillingController(IBillingRepository repository, IMapper mapper)
+    public BillingController(IMapper mapper, IBillingService service)
     {
-        _repository = repository;
         _mapper = mapper;
+        _service = service;
     }
 
     [HttpGet]
     public ApiResponse<List<BillingResponse>> GetAllBilling()
     {
-        var entityList = _repository.GetAll();
-        var mapped = _mapper.Map<List<Billing>, List<BillingResponse>>(entityList);
-        return new ApiResponse<List<BillingResponse>>(mapped);
+        var response = _service.GetAll();
+        return response;
     }
 
     [HttpGet("{id}")]
     public ApiResponse<BillingResponse> GetBillingDetails(int id)
     {
-        var entity = _repository.GetById(id);
-        var mapped = _mapper.Map<Billing, BillingResponse>(entity);
-        return new ApiResponse<BillingResponse>(mapped);
+        var response = _service.GetById(id);
+        return response;
     }
 
 
     [HttpPost]
     public ApiResponse AddBilling([FromBody] BillingRequest request)
     {
-        var entity = _mapper.Map<BillingRequest, Billing>(request);
-        _repository.Insert(entity);
-        _repository.Save();
-        return new ApiResponse();
+        var response = _service.Insert(request);
+        return response;
     }
 
     [HttpPut("{id}")]
     public ApiResponse UpdateBilling(int id, [FromBody] BillingRequest request)
     {
-        var entity = _mapper.Map<BillingRequest, Billing>(request);
-        entity.Id = id;
-        _repository.Update(entity);
-        _repository.Save();
-        return new ApiResponse();
+        var response = _service.Update(id, request);
+        return response;
     }
 
 
     [HttpDelete("{id}")]
     public ApiResponse DeleteBilling(int id)
     {
-        _repository.DeleteById(id);
-        return new ApiResponse();
+        var response = _service.Delete(id);
+        return response;
     }
 
 }

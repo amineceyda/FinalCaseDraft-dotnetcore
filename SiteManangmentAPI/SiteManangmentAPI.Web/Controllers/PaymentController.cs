@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using SiteManangmentAPI.Application.Models;
 using SiteManangmentAPI.Base.Response;
+using SiteManangmentAPI.Business.Services;
 using SiteManangmentAPI.Data.Entities;
 using SiteManangmentAPI.Data.Repository;
 
@@ -12,56 +13,49 @@ namespace SiteManangmentAPI.Web.Controllers;
 [ApiController]
 public class PaymentController : ControllerBase
 {
-    private readonly IPaymentRepository _repository;
+    private readonly IPaymentService _service;
     private readonly IMapper _mapper;
 
-    public PaymentController(IPaymentRepository repository, IMapper mapper)
+    public PaymentController(IMapper mapper, IPaymentService service)
     {
-        _repository = repository;
         _mapper = mapper;
+        _service = service;
     }
 
     [HttpGet]
     public ApiResponse<List<PaymentResponse>> GetAllPayments()
     {
-        var entityList = _repository.GetAll();
-        var mapped = _mapper.Map<List<Payment>, List<PaymentResponse>>(entityList);
-        return new ApiResponse<List<PaymentResponse>>(mapped);
+        var response = _service.GetAll();
+        return response;
     }
 
     [HttpGet("{id}")]
     public ApiResponse<PaymentResponse> GetPaymentDetails(int id)
     {
-        var entity = _repository.GetById(id);
-        var mapped = _mapper.Map<Payment, PaymentResponse>(entity);
-        return new ApiResponse<PaymentResponse>(mapped);
+        var response = _service.GetById(id);
+        return response;
     }
 
 
     [HttpPost]
     public ApiResponse AddPayment([FromBody] PaymentRequest request)
     {
-        var entity = _mapper.Map<PaymentRequest, Payment>(request);
-        _repository.Insert(entity);
-        _repository.Save();
-        return new ApiResponse();
+        var response = _service.Insert(request);
+        return response;
     }
 
     [HttpPut("{id}")]
     public ApiResponse UpdatePayment(int id, [FromBody] PaymentRequest request)
     {
-        var entity = _mapper.Map<PaymentRequest, Payment>(request);
-        entity.Id = id;
-        _repository.Update(entity);
-        _repository.Save();
-        return new ApiResponse();
+        var response = _service.Update(id, request);
+        return response;
     }
 
 
     [HttpDelete("{id}")]
     public ApiResponse DeletePayment(int id)
     {
-        _repository.DeleteById(id);
-        return new ApiResponse();
+        var response = _service.Delete(id);
+        return response;
     }
 }

@@ -3,6 +3,7 @@ using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using SiteManangmentAPI.Application.Models;
 using SiteManangmentAPI.Base.Response;
+using SiteManangmentAPI.Business.Services;
 using SiteManangmentAPI.Data.Entities;
 using SiteManangmentAPI.Data.Repository;
 
@@ -12,56 +13,49 @@ namespace SiteManangmentAPI.Web.Controllers;
 [ApiController]
 public class MessageController : ControllerBase
 {
-    private readonly IMessageRepository _repository;
+    private readonly IMessageService _service;
     private readonly IMapper _mapper;
 
-    public MessageController(IMessageRepository repository, IMapper mapper)
+    public MessageController(IMapper mapper, IMessageService service)
     {
-        _repository = repository;
         _mapper = mapper;
+        _service = service;
     }
 
     [HttpGet]
     public ApiResponse<List<MessageResponse>> GetAllMessages()
     {
-        var entityList = _repository.GetAll();
-        var mapped = _mapper.Map<List<Message>, List<MessageResponse>>(entityList);
-        return new ApiResponse<List<MessageResponse>>(mapped);
+        var response = _service.GetAll();
+        return response;
     }
 
     [HttpGet("{id}")]
     public ApiResponse<MessageResponse> GetMessageDetails(int id)
     {
-        var entity = _repository.GetById(id);
-        var mapped = _mapper.Map<Message, MessageResponse>(entity);
-        return new ApiResponse<MessageResponse>(mapped);
+        var response = _service.GetById(id);
+        return response;
     }
 
 
     [HttpPost]
     public ApiResponse AddMessage([FromBody] MessageRequest request)
     {
-        var entity = _mapper.Map<MessageRequest, Message>(request);
-        _repository.Insert(entity);
-        _repository.Save();
-        return new ApiResponse();
+        var response = _service.Insert(request);
+        return response;
     }
 
     [HttpPut("{id}")]
     public ApiResponse UpdateMessage(int id, [FromBody] MessageRequest request)
     {
-        var entity = _mapper.Map<MessageRequest, Message>(request);
-        entity.Id = id;
-        _repository.Update(entity);
-        _repository.Save();
-        return new ApiResponse();
+        var response = _service.Update(id, request);
+        return response;
     }
 
 
     [HttpDelete("{id}")]
     public ApiResponse DeleteMessage(int id)
     {
-        _repository.DeleteById(id);
-        return new ApiResponse();
+        var response = _service.Delete(id);
+        return response;
     }
 }
