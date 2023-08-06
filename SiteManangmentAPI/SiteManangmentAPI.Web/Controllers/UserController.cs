@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Google.Protobuf.WellKnownTypes;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using SiteManangmentAPI.Application.Models;
@@ -36,7 +37,6 @@ namespace SiteManangmentAPI.Web.Controllers
             return response;
         }
 
-
         [HttpPost]
         public ApiResponse AddUser([FromBody] UserRequest request)
         {
@@ -51,7 +51,6 @@ namespace SiteManangmentAPI.Web.Controllers
             return response;
         }
 
-
         [HttpDelete("{id}")]
         public ApiResponse DeleteUser(int id)
         {
@@ -59,5 +58,26 @@ namespace SiteManangmentAPI.Web.Controllers
             return response;
         }
 
+        [HttpPost("{userId}/make-payment")]
+        public ApiResponse MakePayment(int userId, [FromBody] PaymentRequest paymentRequest)
+        {
+            var response = _service.MakePayment(userId, paymentRequest);
+            return response;
+        }
+
+        [HttpPost("{userId}/send-message")]
+        public ApiResponse SendMessageToAdministrator(int userId, [FromBody] MessageRequest messageRequest)
+        {
+            var response = _service.SendMessageToAdministrator(userId, messageRequest);
+            return response;
+        }
+
+
+        [HttpGet("{id}/apartments/{apartmentId}/bills")]
+        public ApiResponse<List<BillingResponse>> GetUserApartmentBills(int id, int apartmentId)
+        {
+            var response = _service.GetApartmentBills(id, apartmentId);
+            return response;
+        }
     }
 }

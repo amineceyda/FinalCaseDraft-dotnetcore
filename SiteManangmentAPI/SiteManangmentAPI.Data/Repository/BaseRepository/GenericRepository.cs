@@ -5,7 +5,7 @@ namespace SiteManangmentAPI.Data.Repository;
 
 public class GenericRepository<Entity> : IGenericRepository<Entity> where Entity : BaseEntity
 {
-    private readonly SimDbContext _dbContext;
+    protected readonly SimDbContext _dbContext;
     public GenericRepository(SimDbContext dbContext)
     {
         _dbContext = dbContext;

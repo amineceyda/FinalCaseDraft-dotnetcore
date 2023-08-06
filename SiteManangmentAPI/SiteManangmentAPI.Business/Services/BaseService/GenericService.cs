@@ -9,8 +9,8 @@ namespace SiteManangmentAPI.Business.Services;
 
 public class GenericService<TEntity, TRequest, TResponse> : IGenericService<TEntity, TRequest, TResponse> where TEntity : BaseEntity
 {
-    private readonly IMapper _mapper;
-    private readonly IUnitOfWork _unitOfWork;
+    protected readonly IMapper _mapper;
+    protected readonly IUnitOfWork _unitOfWork;
 
     public GenericService(IMapper mapper, IUnitOfWork unitOfWork)
     {

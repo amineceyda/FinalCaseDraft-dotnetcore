@@ -9,4 +9,25 @@ public class UserRepository : GenericRepository<User>, IUserRepository
     public UserRepository(SimDbContext dbContext) : base(dbContext)
     {
     }
+    public void MakePayment(Payment payment)
+    {
+        _dbContext.Payments.Add(payment);
+        _dbContext.SaveChanges();
+    }
+
+    public void SendMessageToAdministrator(Message message)
+    {
+        _dbContext.Messages.Add(message);
+        _dbContext.SaveChanges();
+    }
+
+    public List<Apartment> GetUserApartments(int userId)
+    {
+        return _dbContext.Users
+            .Where(u => u.Id == userId)
+            .SelectMany(u => u.OwnedApartments)
+            .Union(_dbContext.Users.Where(u => u.Id == userId)
+            .SelectMany(u => u.TenantedApartments))
+            .ToList();
+    }
 }
