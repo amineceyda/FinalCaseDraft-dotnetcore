@@ -1,11 +1,11 @@
-﻿
-using AutoMapper;
+﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using SiteManangmentAPI.Application.Models;
 using SiteManangmentAPI.Base.Response;
 using SiteManangmentAPI.Business.Services;
 using SiteManangmentAPI.Data.Entities;
 using SiteManangmentAPI.Data.Repository;
+using SiteManangmentAPI.Web.Services;
 
 namespace SiteManangmentAPI.Web.Controllers;
 
@@ -15,11 +15,13 @@ public class MessageController : ControllerBase
 {
     private readonly IMessageService _service;
     private readonly IMapper _mapper;
+    private readonly RabbitMQService _rabbitMQService;
 
-    public MessageController(IMapper mapper, IMessageService service)
+    public MessageController(IMapper mapper, IMessageService service, RabbitMQService rabbitMQService)
     {
         _mapper = mapper;
         _service = service;
+        _rabbitMQService = rabbitMQService;
     }
 
     [HttpGet]
@@ -57,5 +59,12 @@ public class MessageController : ControllerBase
     {
         var response = _service.Delete(id);
         return response;
+    }
+
+    [HttpPost("send")]
+    public IActionResult SendMessageToAdmin([FromBody] string message)
+    {
+        _rabbitMQService.SendMessage(message);
+        return Ok("Message sent to admin.");
     }
 }
