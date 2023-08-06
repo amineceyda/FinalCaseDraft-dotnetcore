@@ -1,5 +1,7 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using SiteManangmentAPI.Application.Models;
 using SiteManangmentAPI.Base.Response;
 using SiteManangmentAPI.Data.Entities;
 using SiteManangmentAPI.Data.Repository;
@@ -11,39 +13,47 @@ namespace SiteManangmentAPI.Web.Controllers;
 public class PaymentController : ControllerBase
 {
     private readonly IPaymentRepository _repository;
+    private readonly IMapper _mapper;
 
-    public PaymentController(IPaymentRepository repository)
+    public PaymentController(IPaymentRepository repository, IMapper mapper)
     {
         _repository = repository;
+        _mapper = mapper;
     }
 
     [HttpGet]
-    public ApiResponse<List<Payment>> GetAllPayments()
+    public ApiResponse<List<PaymentResponse>> GetAllPayments()
     {
         var entityList = _repository.GetAll();
-        return new ApiResponse<List<Payment>>(entityList);
+        var mapped = _mapper.Map<List<Payment>, List<PaymentResponse>>(entityList);
+        return new ApiResponse<List<PaymentResponse>>(mapped);
     }
 
     [HttpGet("{id}")]
-    public ApiResponse<Payment> GetPaymentDetails(int id)
+    public ApiResponse<PaymentResponse> GetPaymentDetails(int id)
     {
         var entity = _repository.GetById(id);
-        return new ApiResponse<Payment>(entity);
+        var mapped = _mapper.Map<Payment, PaymentResponse>(entity);
+        return new ApiResponse<PaymentResponse>(mapped);
     }
 
 
     [HttpPost]
-    public ApiResponse AddPayment([FromBody] Payment request)
+    public ApiResponse AddPayment([FromBody] PaymentRequest request)
     {
-        _repository.Insert(request);
+        var entity = _mapper.Map<PaymentRequest, Payment>(request);
+        _repository.Insert(entity);
+        _repository.Save();
         return new ApiResponse();
     }
 
     [HttpPut("{id}")]
-    public ApiResponse UpdatePayment(int id, [FromBody] Payment request)
+    public ApiResponse UpdatePayment(int id, [FromBody] PaymentRequest request)
     {
-        request.Id= id;
-        _repository.Update(request);
+        var entity = _mapper.Map<PaymentRequest, Payment>(request);
+        entity.Id = id;
+        _repository.Update(entity);
+        _repository.Save();
         return new ApiResponse();
     }
 

@@ -1,5 +1,7 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using SiteManangmentAPI.Application.Models;
 using SiteManangmentAPI.Base.Response;
 using SiteManangmentAPI.Data.Entities;
 using SiteManangmentAPI.Data.Repository;
@@ -11,39 +13,47 @@ namespace SiteManangmentAPI.Web.Controllers
     public class UserController : ControllerBase
     {
         private readonly IUserRepository _repository;
+        private readonly IMapper _mapper;
 
-        public UserController(IUserRepository repository)
+        public UserController(IUserRepository repository, IMapper mapper)
         {
             _repository = repository;
+            _mapper = mapper;
         }
 
         [HttpGet]
-        public ApiResponse<List<User>> GetAllUser()
+        public ApiResponse<List<UserResponse>> GetAllUser()
         {
             var entityList = _repository.GetAll();
-            return new ApiResponse<List<User>>(entityList);
+            var mapped = _mapper.Map<List<User>, List<UserResponse>>(entityList);
+            return new ApiResponse<List<UserResponse>>(mapped);
         }
 
         [HttpGet("{id}")]
-        public ApiResponse<User> GetUserDetails(int id)
+        public ApiResponse<UserResponse> GetUserDetails(int id)
         {
             var entity = _repository.GetById(id);
-            return new ApiResponse<User>(entity);
+            var mapped = _mapper.Map<User, UserResponse>(entity);
+            return new ApiResponse<UserResponse>(mapped);
         }
 
 
         [HttpPost]
-        public ApiResponse AddUser([FromBody] User request)
+        public ApiResponse AddUser([FromBody] UserRequest request)
         {
-            _repository.Insert(request);
+            var entity = _mapper.Map<UserRequest, User>(request);
+            _repository.Insert(entity);
+            _repository.Save();
             return new ApiResponse();
         }
 
         [HttpPut("{id}")]
-        public ApiResponse UpdateUser(int id, [FromBody] User request)
+        public ApiResponse UpdateUser(int id, [FromBody] UserRequest request)
         {
-            request.Id = id;
-            _repository.Update(request);
+            var entity = _mapper.Map<UserRequest, User>(request);
+            entity.Id = id;
+            _repository.Update(entity);
+            _repository.Save();
             return new ApiResponse();
         }
 

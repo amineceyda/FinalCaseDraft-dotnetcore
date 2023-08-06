@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Mvc;
+using SiteManangmentAPI.Application.Models;
 using SiteManangmentAPI.Base.Response;
 using SiteManangmentAPI.Data.Entities;
 using SiteManangmentAPI.Data.Repository;
@@ -10,39 +12,48 @@ namespace SiteManangmentAPI.Web.Controllers;
 public class ContactController : ControllerBase
 {
     private readonly IContactRepository _repository;
+    private readonly IMapper _mapper;
 
-    public ContactController(IContactRepository repository)
+    public ContactController(IContactRepository repository, IMapper mapper)
     {
         _repository = repository;
+        _mapper = mapper;
     }
 
     [HttpGet]
-    public ApiResponse<List<Contact>> GetAllContacts()
+    public ApiResponse<List<ContactResponse>> GetAllContacts()
     {
         var entityList = _repository.GetAll();
-        return new ApiResponse<List<Contact>>(entityList);
+        var mapped = _mapper.Map<List<Contact>, List<ContactResponse>>(entityList);
+        return new ApiResponse<List<ContactResponse>>(mapped);
     }
 
     [HttpGet("{id}")]
-    public ApiResponse<Contact> GetContactDetails(int id)
+    public ApiResponse<ContactResponse> GetContactDetails(int id)
     {
         var entity = _repository.GetById(id);
-        return new ApiResponse<Contact>(entity);
+        var mapped = _mapper.Map<Contact, ContactResponse>(entity);
+        return new ApiResponse<ContactResponse>(mapped);
     }
 
 
     [HttpPost]
-    public ApiResponse AddContact([FromBody] Contact request)
+    public ApiResponse AddContact([FromBody] ContactRequest request)
     {
-        _repository.Insert(request);
+        var entity = _mapper.Map<ContactRequest, Contact>(request);
+        _repository.Insert(entity);
+        _repository.Save();
         return new ApiResponse();
+
     }
 
     [HttpPut("{id}")]
-    public ApiResponse UpdateContact(int id, [FromBody] Contact request)
+    public ApiResponse UpdateContact(int id, [FromBody] ContactRequest request)
     {
-        request.Id = id;
-        _repository.Update(request);
+        var entity = _mapper.Map<ContactRequest, Contact>(request);
+        entity.Id = id;
+        _repository.Update(entity);
+        _repository.Save();
         return new ApiResponse();
     }
 

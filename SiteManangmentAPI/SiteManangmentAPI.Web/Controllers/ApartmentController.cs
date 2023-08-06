@@ -1,5 +1,7 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using SiteManangmentAPI.Application.Models;
 using SiteManangmentAPI.Base.Response;
 using SiteManangmentAPI.Data.Entities;
 using SiteManangmentAPI.Data.Repository;
@@ -12,39 +14,47 @@ namespace SiteManangmentAPI.Web.Controllers;
 public class ApartmentController : ControllerBase
 {
     private readonly IApartmentRepository _repository;
+    private readonly IMapper _mapper;
 
-    public ApartmentController(IApartmentRepository repository)
+    public ApartmentController(IApartmentRepository repository, IMapper mapper)
     {
-            _repository = repository;
+        _repository = repository;
+        _mapper = mapper;
     }
 
     [HttpGet]
-    public ApiResponse<List<Apartment>> GetAllApartments()
+    public ApiResponse<List<ApartmentResponse>> GetAllApartments()
     {
         var entityList = _repository.GetAll();
-        return new ApiResponse<List<Apartment>>(entityList);
+        var mapped = _mapper.Map<List<Apartment>, List<ApartmentResponse>>(entityList);
+        return new ApiResponse<List<ApartmentResponse>>(mapped);
     }
 
     [HttpGet("{id}")]
-    public ApiResponse<Apartment> GetApartmentDetails(int id)
+    public ApiResponse<ApartmentResponse> GetApartmentDetails(int id)
     {
         var entity = _repository.GetById(id);
-        return new ApiResponse<Apartment>(entity);
+        var mapped = _mapper.Map<Apartment, ApartmentResponse>(entity);
+        return new ApiResponse<ApartmentResponse>(mapped);
     }
 
 
     [HttpPost]
-    public ApiResponse AddApartment([FromBody] Apartment request)
+    public ApiResponse AddApartment([FromBody] ApartmentRequest request)
     {
-        _repository.Insert(request);
+        var entity = _mapper.Map<ApartmentRequest, Apartment>(request);
+        _repository.Insert(entity);
+        _repository.Save();
         return new ApiResponse();
     }
 
     [HttpPut("{id}")]
-    public ApiResponse UpdateApartment(int id, [FromBody] Apartment request)
+    public ApiResponse UpdateApartment(int id, [FromBody] ApartmentRequest request)
     {
-        request.Id = id;
-        _repository.Update(request);
+        var entity = _mapper.Map<ApartmentRequest, Apartment>(request);
+        entity.Id = id;
+        _repository.Update(entity);
+        _repository.Save();
         return new ApiResponse();
     }
 
