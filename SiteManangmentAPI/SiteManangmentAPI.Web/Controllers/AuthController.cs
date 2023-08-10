@@ -29,7 +29,7 @@ public class AuthController : ControllerBase
         _mapper = mapper;
     }
 
-    [HttpPost("register")]
+    [HttpPost("admin-register")]
     public async Task<ActionResult<User>> Register(RegisterRequest request)
     {
         try
@@ -55,6 +55,41 @@ public class AuthController : ControllerBase
             _userRepository.Save(); 
 
             Log.Information("User registered successfully: {@User}", user); 
+            return Ok("User registered successfully");
+        }
+        catch (Exception ex)
+        {
+            Log.Error(ex, "An error occurred during user registration");
+            return StatusCode(StatusCodes.Status500InternalServerError, "An error occurred during user registration");
+        }
+    }
+
+    [HttpPost("user-register"),Authorize(Roles = "Admin")]
+    public async Task<ActionResult<User>> UserRegister(RegisterRequest request)
+    {
+        try
+        {
+            CreatePasswordHash(request.Password, out byte[] passwordHash, out byte[] passwordSalt);
+
+            var user = new User
+            {
+                // Map properties from request to User entity
+                Username = request.Username,
+                PasswordHash = passwordHash,
+                PasswordSalt = passwordSalt,
+                UserType = Base.Enums.UserType.User,
+                Email = request.Email,
+                FirstName = request.FirstName,
+                LastName = request.LastName,
+                VehiclePlateNumber = request.VehiclePlateNumber,
+                TCNo = request.TCNo
+            };
+
+            _userRepository.Insert(user);
+
+            _userRepository.Save();
+
+            Log.Information("User registered successfully: {@User}", user);
             return Ok("User registered successfully");
         }
         catch (Exception ex)
@@ -97,7 +132,7 @@ public class AuthController : ControllerBase
         List<Claim> claims = new List<Claim>
         {
             new Claim(ClaimTypes.Name, user.Username),
-            new Claim(ClaimTypes.Role, "Admin")
+            new Claim(ClaimTypes.Role, user.UserType.ToString()) // Convert enum to string
         };
 
         var key = new SymmetricSecurityKey(System.Text.Encoding.UTF8.GetBytes(

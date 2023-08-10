@@ -1,15 +1,18 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SiteManangmentAPI.Application.Models;
 using SiteManangmentAPI.Base.Response;
 using SiteManangmentAPI.Business.Services;
 using SiteManangmentAPI.Data.Entities;
 using SiteManangmentAPI.Data.Repository;
+using System.Data;
 
 namespace SiteManangmentAPI.Web.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
+[Authorize]
 public class ContactController : ControllerBase
 {
     private readonly IContactService _service;

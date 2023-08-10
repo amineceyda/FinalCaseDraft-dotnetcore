@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Google.Protobuf.WellKnownTypes;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using SiteManangmentAPI.Application.Models;
@@ -12,6 +13,7 @@ namespace SiteManangmentAPI.Web.Controllers
 {
     [Route("api/[controller]s")]
     [ApiController]
+    [Authorize("Admin")]
     public class UserController : ControllerBase
     {
         private readonly IUserService _service;
@@ -36,13 +38,13 @@ namespace SiteManangmentAPI.Web.Controllers
             var response = _service.GetById(id);
             return response;
         }
-
+        /* in AuthController
         [HttpPost]
         public ApiResponse AddUser([FromBody] UserRequest request)
         {
             var response = _service.Insert(request);
             return response;
-        }
+        }*/
 
         [HttpPut("{id}")]
         public ApiResponse UpdateUser(int id, [FromBody] UserRequest request)

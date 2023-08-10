@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using SiteManangmentAPI.Application.Models;
@@ -22,14 +23,14 @@ public class PaymentController : ControllerBase
         _service = service;
     }
 
-    [HttpGet]
+    [HttpGet,Authorize(Roles = "Admin")]
     public ApiResponse<List<PaymentResponse>> GetAllPayments()
     {
         var response = _service.GetAllPaymentsWithInclude();
         return response;
     }
 
-    [HttpGet("{id}")]
+    [HttpGet("{id}"),Authorize]
     public ApiResponse<PaymentResponse> GetPaymentDetails(int id)
     {
         var response = _service.GetPaymentByIdWithInclude(id);
@@ -37,14 +38,14 @@ public class PaymentController : ControllerBase
     }
 
 
-    [HttpPost]
+    [HttpPost("make-payment"), Authorize]
     public ApiResponse AddPayment([FromBody] PaymentRequest request)
     {
         var response = _service.Insert(request);
         return response;
     }
 
-    [HttpPut("{id}")]
+    [HttpPut("{id}"),Authorize]
     public ApiResponse UpdatePayment(int id, [FromBody] PaymentRequest request)
     {
         var response = _service.Update(id, request);
@@ -52,7 +53,7 @@ public class PaymentController : ControllerBase
     }
 
 
-    [HttpDelete("{id}")]
+    [HttpDelete("{id}"), Authorize("Admin")]
     public ApiResponse DeletePayment(int id)
     {
         var response = _service.Delete(id);

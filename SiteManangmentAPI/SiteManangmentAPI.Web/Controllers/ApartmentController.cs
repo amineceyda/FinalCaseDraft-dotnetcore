@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using SiteManangmentAPI.Application.Models;
@@ -6,12 +7,14 @@ using SiteManangmentAPI.Base.Response;
 using SiteManangmentAPI.Business.Services;
 using SiteManangmentAPI.Data.Entities;
 using SiteManangmentAPI.Data.Repository;
+using System.Data;
 
 namespace SiteManangmentAPI.Web.Controllers;
 
 
 [Route("api/[controller]s")]
 [ApiController]
+[Authorize(Roles = "Admin")]
 public class ApartmentController : ControllerBase
 {
     private readonly IApartmentService _service;
