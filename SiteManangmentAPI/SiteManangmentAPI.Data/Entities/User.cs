@@ -10,8 +10,9 @@ namespace SiteManangmentAPI.Data.Entities
     [Table("Users", Schema = "dbo")]
     public class User : BaseEntity
     {
-        public string Username { get; set; }
-        public string Password { get; set; }
+        public string Username { get; set; } = string.Empty;
+        public byte[] PasswordHash { get; set; }
+        public byte[] PasswordSalt { get; set; }
         public UserType UserType { get; set; }
 
         public string FirstName { get; set; }
@@ -40,8 +41,6 @@ namespace SiteManangmentAPI.Data.Entities
 
             builder.Property(u => u.Id).IsRequired(true).UseIdentityColumn();
             builder.Property(u => u.InsertTime).IsRequired(true);
-            builder.Property(u => u.Username).IsRequired(true).HasMaxLength(50);
-            builder.Property(u => u.Password).IsRequired(true).HasMaxLength(100);
             builder.Property(u => u.UserType).IsRequired(true);
             builder.Property(u => u.FirstName).IsRequired(true).HasMaxLength(100);
             builder.Property(u => u.LastName).IsRequired(true).HasMaxLength(100);

@@ -12,7 +12,7 @@ using SiteManangmentAPI.Data.DBContext;
 namespace SiteManangmentAPI.Data.Migrations
 {
     [DbContext(typeof(SimDbContext))]
-    [Migration("20230809224220_InitialMigrations")]
+    [Migration("20230810033834_InitialMigrations")]
     partial class InitialMigrations
     {
         /// <inheritdoc />
@@ -251,10 +251,13 @@ namespace SiteManangmentAPI.Data.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
-                    b.Property<string>("Password")
+                    b.Property<byte[]>("PasswordHash")
                         .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
+                        .HasColumnType("varbinary(max)");
+
+                    b.Property<byte[]>("PasswordSalt")
+                        .IsRequired()
+                        .HasColumnType("varbinary(max)");
 
                     b.Property<string>("TCNo")
                         .IsRequired()
@@ -269,8 +272,7 @@ namespace SiteManangmentAPI.Data.Migrations
 
                     b.Property<string>("Username")
                         .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("VehiclePlateNumber")
                         .HasMaxLength(20)
