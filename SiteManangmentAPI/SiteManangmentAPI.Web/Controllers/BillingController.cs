@@ -25,14 +25,14 @@ public class BillingController : ControllerBase
     [HttpGet]
     public ApiResponse<List<BillingResponse>> GetAllBilling()
     {
-        var response = _service.GetAll();
+        var response = _service.GetAllBillingWithInclude();
         return response;
     }
 
     [HttpGet("{id}")]
     public ApiResponse<BillingResponse> GetBillingDetails(int id)
     {
-        var response = _service.GetById(id);
+        var response = _service.GetBillingByIdWithInclude(id);
         return response;
     }
 

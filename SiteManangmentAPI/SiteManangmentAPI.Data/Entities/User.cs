@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using SiteManangmentAPI.Base.Enums;
 using System.ComponentModel.DataAnnotations.Schema;
 using SiteManangmentAPI.Base.BaseEntities;
-using System.Collections.Generic;
+
 
 namespace SiteManangmentAPI.Data.Entities
 {

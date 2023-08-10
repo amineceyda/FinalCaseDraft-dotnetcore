@@ -3,8 +3,8 @@ namespace SiteManangmentAPI.Base.Enums;
 
 public enum ApartmentStatus
 {
-    Full,
-    Empty
+    Full = 1,
+    Empty 
 }
 
 

@@ -25,14 +25,14 @@ public class PaymentController : ControllerBase
     [HttpGet]
     public ApiResponse<List<PaymentResponse>> GetAllPayments()
     {
-        var response = _service.GetAll();
+        var response = _service.GetAllPaymentsWithInclude();
         return response;
     }
 
     [HttpGet("{id}")]
     public ApiResponse<PaymentResponse> GetPaymentDetails(int id)
     {
-        var response = _service.GetById(id);
+        var response = _service.GetPaymentByIdWithInclude(id);
         return response;
     }
 

@@ -27,14 +27,14 @@ public class ApartmentController : ControllerBase
     [HttpGet]
     public ApiResponse<List<ApartmentResponse>> GetAllApartments()
     {
-        var response = _service.GetAll();
+        var response = _service.GetAllApartmentsWithInclude();
         return response;
     }
 
     [HttpGet("{id}")]
     public ApiResponse<ApartmentResponse> GetApartmentDetails(int id)
     {
-        var response = _service.GetById(id);
+        var response = _service.GetByIdWithInclude(id);
         return response;
     }
 

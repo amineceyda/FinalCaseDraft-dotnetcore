@@ -4,7 +4,7 @@ namespace SiteManangmentAPI.Base.Enums;
 
 public enum ApartmentType
 {
-    Studio,
+    Studio = 1,
     OnePlusOne,
     TwoPlusOne,
     ThreePlusOne

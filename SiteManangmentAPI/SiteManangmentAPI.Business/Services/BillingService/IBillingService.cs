@@ -2,10 +2,10 @@
 using SiteManangmentAPI.Base.Response;
 using SiteManangmentAPI.Data.Entities;
 
-namespace SiteManangmentAPI.Business.Services
+namespace SiteManangmentAPI.Business.Services;
+
+public interface IBillingService : IGenericService<Billing, BillingRequest, BillingResponse>
 {
-    public interface IBillingService : IGenericService<Billing, BillingRequest, BillingResponse>
-    {
-        // Add any additional methods specific to the Billing entity if needed
-    }
+    ApiResponse<List<BillingResponse>> GetAllBillingWithInclude();
+    ApiResponse<BillingResponse> GetBillingByIdWithInclude(int id);
 }
