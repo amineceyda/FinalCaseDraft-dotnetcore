@@ -49,18 +49,24 @@ dotnet ef migrations add SeedData -s ..\SiteManangmentAPI.Web\
 
 ```json
 {
-   "Logging": {
-     "LogLevel": {
-       "Default": "Information",
-       "Microsoft.AspNetCore": "Warning"
-     }
-   },
-   "AllowedHosts": "*",
+   {
+  "Logging": {
+    "LogLevel": {
+      "Default": "Information",
+      "Microsoft.AspNetCore": "Warning"
+    }
+  },
+  "AllowedHosts": "*",
 
-   // Connection String for DB
-   "ConnectionStrings": {
-     "DbType": "MsSql",
-     "MsSqlConnection": "Server=localhost\\SQLEXPRESS;Database=siteManangmentDb;Trusted_Connection=True;Encrypt=False;"
+  //Connection String for DB
+  "ConnectionStrings": {
+    "DbType": "MsSql",
+    "MsSqlConnection": "Server=localhost\\SQLEXPRESS;Database=siteManangmentDb;Trusted_Connection=True;Encrypt=False;"
+  },
+  //Authentication Token
+  "AppSettings": {
+    "Token": "IfHuNfjVGfzMscG7DGmurA==" //base64 random string for key
+  },
    }
 }
 ```
