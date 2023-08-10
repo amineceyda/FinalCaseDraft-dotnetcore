@@ -12,6 +12,6 @@ public class UserRequestValidator : AbstractValidator<UserRequest>
         RuleFor(x => x.Email).NotEmpty().EmailAddress().WithMessage("A valid email address is required.");
         RuleFor(x => x.TCNo).NotEmpty().Length(11).WithMessage("TCNo must be exactly 11 characters.");
         RuleFor(x => x.VehiclePlateNumber).NotEmpty().WithMessage("Vehicle plate number is required.");
-        RuleFor(x => x.GeneratedPassword).NotEmpty().WithMessage("Generated password is required.");
+
     }
 }

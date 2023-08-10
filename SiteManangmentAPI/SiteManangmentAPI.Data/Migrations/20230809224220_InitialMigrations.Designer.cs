@@ -12,7 +12,7 @@ using SiteManangmentAPI.Data.DBContext;
 namespace SiteManangmentAPI.Data.Migrations
 {
     [DbContext(typeof(SimDbContext))]
-    [Migration("20230806130736_InitialMigrations")]
+    [Migration("20230809224220_InitialMigrations")]
     partial class InitialMigrations
     {
         /// <inheritdoc />

@@ -12,19 +12,20 @@ public class MapperProfile : Profile
     {
         CreateMap<User, UserResponse>();
         CreateMap<UserRequest, User>()
-            .ForMember(dest => dest.Password, opt => opt.Ignore())
-            .ForMember(dest => dest.Id, opt => opt.Ignore()) 
-            .ForMember(dest => dest.UserType, opt => opt.MapFrom(src => Enum.Parse<UserType>(src.UserType))) 
-            .ForMember(dest => dest.IsActive, opt => opt.MapFrom(src => true));
+                        .ForMember(dest => dest.Id, opt => opt.Ignore()) 
+                        .ForMember(dest => dest.InsertTime, opt => opt.Ignore()) 
+                        .ForMember(dest => dest.IsActive, opt => opt.MapFrom(src => true)); 
 
 
         CreateMap<Apartment, ApartmentResponse>()
             .ForMember(dest => dest.OwnerUserName, opt => opt.MapFrom(src => src.OwnerUser.Username))
             .ForMember(dest => dest.TenantUserName, opt => opt.MapFrom(src => src.TenantUser.Username));
         CreateMap<ApartmentRequest, Apartment>()
-            .ForMember(dest => dest.Id, opt => opt.Ignore()) 
-            .ForMember(dest => dest.OwnerUser, opt => opt.Ignore()) 
-            .ForMember(dest => dest.TenantUser, opt => opt.Ignore());
+                .ForMember(dest => dest.Id, opt => opt.Ignore())
+                .ForMember(dest => dest.InsertTime, opt => opt.Ignore())
+                .ForMember(dest => dest.OwnerUser, opt => opt.Ignore())
+                .ForMember(dest => dest.TenantUser, opt => opt.Ignore())
+                .ForMember(dest => dest.Bills, opt => opt.Ignore());
 
         CreateMap<Billing, BillingResponse>()
             .ForMember(dest => dest.ApartmentID, opt => opt.MapFrom(src => src.Apartment.ApartmentNumber));

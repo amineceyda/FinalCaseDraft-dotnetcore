@@ -6,6 +6,7 @@ using System.Reflection;
 using SiteManangmentAPI.Business.Services;
 using SiteManangmentAPI.Web.Middlewares;
 using SiteManangmentAPI.Data.UnitOfWork;
+using SiteManangmentAPI.Business.Mappers;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -28,7 +29,8 @@ builder.Services.AddScoped<IPaymentRepository, PaymentRepository>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 
 // Mapper register
-builder.Services.AddAutoMapper(Assembly.GetExecutingAssembly());
+builder.Services.AddAutoMapper(Assembly.GetAssembly(typeof(MapperProfile)));
+
 
 // Logger register
 builder.Services.AddSingleton<ILoggerService, ConsoleLogger>();
