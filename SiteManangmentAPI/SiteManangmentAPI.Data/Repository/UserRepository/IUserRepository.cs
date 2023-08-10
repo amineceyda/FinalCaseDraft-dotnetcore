@@ -10,4 +10,6 @@ public interface IUserRepository : IGenericRepository<User>
     void SendMessageToAdministrator(Message message);
 
     List<Apartment> GetUserApartments(int userId);
+
+    User GetByUsername(string username);
 }

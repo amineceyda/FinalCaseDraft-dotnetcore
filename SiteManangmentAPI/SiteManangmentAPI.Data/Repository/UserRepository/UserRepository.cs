@@ -30,4 +30,9 @@ public class UserRepository : GenericRepository<User>, IUserRepository
             .SelectMany(u => u.TenantedApartments))
             .ToList();
     }
+
+    public User GetByUsername(string username)
+    {
+        return _dbContext.Users.SingleOrDefault(u => u.Username == username);
+    }
 }

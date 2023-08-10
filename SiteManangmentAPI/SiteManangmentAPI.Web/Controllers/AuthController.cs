@@ -1,9 +1,12 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
+using Serilog;
 using SiteManangmentAPI.Business.Models;
 using SiteManangmentAPI.Data.Entities;
+using SiteManangmentAPI.Data.Repository;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Security.Cryptography;
@@ -16,47 +19,77 @@ public class AuthController : ControllerBase
 {
     public static User user = new User();
     private readonly IConfiguration _configuration;
+    private readonly IUserRepository _userRepository;
+    private readonly IMapper _mapper;
 
-    public AuthController(IConfiguration configuration)
+    public AuthController(IConfiguration configuration, IUserRepository userRepository, IMapper mapper)
     {
         _configuration = configuration;
+        _userRepository = userRepository;
+        _mapper = mapper;
     }
-
 
     [HttpPost("register")]
     public async Task<ActionResult<User>> Register(RegisterRequest request)
     {
-        CreatePasswordHash(request.Password, out byte[] passwordHash, out byte[] passwordSalt);
+        try
+        {
+            CreatePasswordHash(request.Password, out byte[] passwordHash, out byte[] passwordSalt);
 
-        user.Username = request.Username;
-        user.PasswordHash = passwordHash;
-        user.PasswordSalt = passwordSalt;
-        user.UserType = Base.Enums.UserType.Admin;
-        user.Email = request.Email;
-        user.FirstName = request.FirstName;
-        user.LastName = request.LastName;
-        user.VehiclePlateNumber = request.VehiclePlateNumber;
-        user.TCNo = request.TCNo;
+            var user = new User
+            {
+                // Map properties from request to User entity
+                Username = request.Username,
+                PasswordHash = passwordHash,
+                PasswordSalt = passwordSalt,
+                UserType = Base.Enums.UserType.Admin,
+                Email = request.Email,
+                FirstName = request.FirstName,
+                LastName = request.LastName,
+                VehiclePlateNumber = request.VehiclePlateNumber,
+                TCNo = request.TCNo
+            };
 
-        return Ok(user);
+            _userRepository.Insert(user);
+
+            _userRepository.Save(); 
+
+            Log.Information("User registered successfully: {@User}", user); 
+            return Ok("User registered successfully");
+        }
+        catch (Exception ex)
+        {
+            Log.Error(ex, "An error occurred during user registration");
+            return StatusCode(StatusCodes.Status500InternalServerError, "An error occurred during user registration");
+        }
     }
 
     [HttpPost("login")]
     public async Task<ActionResult<string>> Login(LoginRequest request)
     {
-        if (user.Username != request.Username)
+        try
         {
-            return BadRequest("User not found.");
-        }
+            var user = _userRepository.GetByUsername(request.Username); 
 
-        if (!VerifyPasswordHash(request.Password, user.PasswordHash, user.PasswordSalt))
+            if (user == null)
+            {
+                return BadRequest("User not found.");
+            }
+
+            if (!VerifyPasswordHash(request.Password, user.PasswordHash, user.PasswordSalt))
+            {
+                return BadRequest("Wrong password.");
+            }
+
+            string token = CreateToken(user);
+
+            return Ok(token);
+        }
+        catch (Exception ex)
         {
-            return BadRequest("Wrong password.");
+            Log.Error(ex, "An error occurred during user login");
+            return StatusCode(StatusCodes.Status500InternalServerError, "An error occurred during user login");
         }
-
-        string token = CreateToken(user);
-
-        return Ok(token);
     }
 
     private string CreateToken(User user)
