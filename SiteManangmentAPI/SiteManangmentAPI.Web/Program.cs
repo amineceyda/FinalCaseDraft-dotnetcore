@@ -16,14 +16,14 @@ using System.Text;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-
-//dbContext
+//db Configuration
 var dbType = builder.Configuration.GetConnectionString("DbType");
 if (dbType == "MsSql")
 {
     builder.Services.AddDbContext<SimDbContext>(options =>
         options.UseSqlServer(builder.Configuration.GetConnectionString("MsSqlConnection")));
 }
+
 
 // Repository register
 builder.Services.AddScoped<IApartmentRepository, ApartmentRepository>();
@@ -36,11 +36,10 @@ builder.Services.AddScoped<IUserRepository, UserRepository>();
 // Mapper register
 builder.Services.AddAutoMapper(Assembly.GetAssembly(typeof(MapperProfile)));
 
-
 // Logger register
 builder.Services.AddSingleton<ILoggerService, ConsoleLogger>();
 
-//UnitOfWork register
+// UnitOfWork register
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 
 // Custom service register
@@ -50,13 +49,14 @@ builder.Services.AddScoped<IContactService, ContactService>();
 builder.Services.AddScoped<IMessageService, MessageService>();
 builder.Services.AddScoped<IPaymentService, PaymentService>();
 builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddHttpContextAccessor(); // Add this line
 
 builder.Services.AddControllers();
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 
-//Authorization icon
+// Authorization icon
 builder.Services.AddSwaggerGen(options =>
 {
     options.AddSecurityDefinition("oauth2", new OpenApiSecurityScheme
@@ -70,30 +70,28 @@ builder.Services.AddSwaggerGen(options =>
     options.OperationFilter<SecurityRequirementsOperationFilter>();
 });
 
-//Authentication
+// Authentication
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
     {
         options.TokenValidationParameters = new TokenValidationParameters
         {
             ValidateIssuerSigningKey = true,
-            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8
-                .GetBytes(builder.Configuration.GetSection("AppSettings:Token").Value)),
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.
+            GetBytes(builder.Configuration.GetSection("AppSettings:Token").Value)),
             ValidateIssuer = false,
             ValidateAudience = false
         };
     });
 
+// Authorization policies
 builder.Services.AddAuthorization(options =>
 {
     options.AddPolicy("Admin", policy =>
     {
-        policy.RequireRole("Admin"); 
+        policy.RequireRole("Admin");
     });
-
 });
-
-
 
 var app = builder.Build();
 
@@ -106,11 +104,15 @@ if (app.Environment.IsDevelopment())
 
 // Add middleware to the pipeline 
 
-app.UseCustomExceptionMiddleware(); // This uses the custom extension method
+app.UseCustomExceptionMiddleware(); //custom exception middleware
+app.UseMiddleware<ErrorHandlerMiddleware>(); //custom error handler middleware
+//app.UseMiddleware<RequestLoggingMiddleware>(); //custom request logging middleware
 
-app.UseAuthentication();//
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
 
 app.Run();
+
+

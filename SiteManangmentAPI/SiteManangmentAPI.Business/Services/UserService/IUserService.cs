@@ -6,8 +6,8 @@ using SiteManangmentAPI.Data.Entities;
 public interface IUserService : IGenericService<User, UserRequest, UserResponse>
 {
 
-    ApiResponse MakePayment(int userId, PaymentRequest paymentRequest);
-    ApiResponse SendMessageToAdministrator(int userId, MessageRequest messageRequest);
-    ApiResponse<List<BillingResponse>> GetApartmentBills(int userId, int apartmentId);
+    ApiResponse MakePayment(PaymentRequest paymentRequest);
+    ApiResponse SendMessageToAdministrator(MessageRequest messageRequest);
+    ApiResponse<List<BillingResponse>> GetApartmentBills(int apartmentId);
 
 }

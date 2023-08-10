@@ -12,8 +12,8 @@ using SiteManangmentAPI.Data.DBContext;
 namespace SiteManangmentAPI.Data.Migrations
 {
     [DbContext(typeof(SimDbContext))]
-    [Migration("20230810033834_InitialMigrations")]
-    partial class InitialMigrations
+    [Migration("20230810061754_SeedData")]
+    partial class SeedData
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

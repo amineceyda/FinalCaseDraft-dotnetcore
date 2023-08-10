@@ -13,7 +13,7 @@ namespace SiteManangmentAPI.Web.Controllers
 {
     [Route("api/[controller]s")]
     [ApiController]
-    [Authorize("Admin")]
+ 
     public class UserController : ControllerBase
     {
         private readonly IUserService _service;
@@ -25,14 +25,14 @@ namespace SiteManangmentAPI.Web.Controllers
             _service = service;
         }
 
-        [HttpGet]
+        [HttpGet,Authorize("Admin")]
         public ApiResponse<List<UserResponse>> GetAllUser()
         {
             var response = _service.GetAll();
             return response;
         }
 
-        [HttpGet("{id}")]
+        [HttpGet("{id}"), Authorize("Admin")]
         public ApiResponse<UserResponse> GetUserDetails(int id)
         {
             var response = _service.GetById(id);
@@ -46,39 +46,39 @@ namespace SiteManangmentAPI.Web.Controllers
             return response;
         }*/
 
-        [HttpPut("{id}")]
+        [HttpPut("{id}"), Authorize("Admin")]
         public ApiResponse UpdateUser(int id, [FromBody] UserRequest request)
         {
             var response = _service.Update(id, request);
             return response;
         }
 
-        [HttpDelete("{id}")]
+        [HttpDelete("{id}"), Authorize("Admin")]
         public ApiResponse DeleteUser(int id)
         {
             var response = _service.Delete(id);
             return response;
         }
 
-        [HttpPost("{userId}/make-payment")]
-        public ApiResponse MakePayment(int userId, [FromBody] PaymentRequest paymentRequest)
+        [HttpPost("make-payment"),Authorize]
+        public ApiResponse MakePayment([FromBody] PaymentRequest paymentRequest)
         {
-            var response = _service.MakePayment(userId, paymentRequest);
+            var response = _service.MakePayment(paymentRequest);
             return response;
         }
 
-        [HttpPost("{userId}/send-message")]
-        public ApiResponse SendMessageToAdministrator(int userId, [FromBody] MessageRequest messageRequest)
+        [HttpPost("send-message"), Authorize]
+        public ApiResponse SendMessageToAdministrator([FromBody] MessageRequest messageRequest)
         {
-            var response = _service.SendMessageToAdministrator(userId, messageRequest);
+            var response = _service.SendMessageToAdministrator(messageRequest);
             return response;
         }
 
 
-        [HttpGet("{id}/apartments/{apartmentId}/bills")]
-        public ApiResponse<List<BillingResponse>> GetUserApartmentBills(int id, int apartmentId)
+        [HttpGet("apartments/{apartmentId}/bills"), Authorize]
+        public ApiResponse<List<BillingResponse>> GetUserApartmentBills(int apartmentId)
         {
-            var response = _service.GetApartmentBills(id, apartmentId);
+            var response = _service.GetApartmentBills(apartmentId);
             return response;
         }
     }

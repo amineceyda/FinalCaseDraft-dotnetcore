@@ -2,107 +2,110 @@
 using Serilog;
 using SiteManangmentAPI.Base.Logger;
 
-namespace SiteManangmentAPI.Web.Middlewares;
-
-public class RequestLoggingMiddleware
+namespace SiteManangmentAPI.Web.Middlewares
 {
-    private readonly RequestDelegate next;
-    private readonly RecyclableMemoryStreamManager recyclableMemoryStreamManager;
-    private readonly Action<RequestProfilerModel> requestResponseHandler;
-    private const int ReadChunkBufferLength = 4096;
-    public RequestLoggingMiddleware(RequestDelegate next,Action<RequestProfilerModel> requestResponseHandler)
+    public class RequestLoggingMiddleware
     {
-        this.next = next;
-        this.requestResponseHandler = requestResponseHandler;
-        this.recyclableMemoryStreamManager = new RecyclableMemoryStreamManager();
-    }
+        private readonly RequestDelegate next;
+        private readonly RecyclableMemoryStreamManager recyclableMemoryStreamManager;
+        private readonly Action<RequestProfilerModel> requestResponseHandler;
+        private readonly ILoggerService _loggerService; // Add the ILoggerService field
+        private const int ReadChunkBufferLength = 4096;
 
-    public async Task Invoke(HttpContext context)
-    {
-        Log.Information("LogRequestLoggingMiddleware.Invoke");
-
-        var model = new RequestProfilerModel
+        public RequestLoggingMiddleware(RequestDelegate next, Action<RequestProfilerModel> requestResponseHandler, ILoggerService loggerService)
         {
-            RequestTime = new DateTimeOffset(),
-            Context = context,
-            Request = await FormatRequest(context)
-        };
+            this.next = next;
+            this.requestResponseHandler = requestResponseHandler;
+            this.recyclableMemoryStreamManager = new RecyclableMemoryStreamManager();
+            _loggerService = loggerService; // Store the logger service instance
+        }
 
-        Stream originalBody = context.Response.Body;
-
-        using (MemoryStream newResponseBody = recyclableMemoryStreamManager.GetStream())
+        public async Task Invoke(HttpContext context)
         {
-            context.Response.Body = newResponseBody;
+            _loggerService.Write("LogRequestLoggingMiddleware.Invoke");
 
-            await next(context);
+            var model = new RequestProfilerModel
+            {
+                RequestTime = new DateTimeOffset(),
+                Context = context,
+                Request = await FormatRequest(context)
+            };
 
-            newResponseBody.Seek(0, SeekOrigin.Begin);
-            await newResponseBody.CopyToAsync(originalBody);
+            Stream originalBody = context.Response.Body;
 
-            newResponseBody.Seek(0, SeekOrigin.Begin);
-            model.Response = FormatResponse(context, newResponseBody);
-            model.ResponseTime = new DateTimeOffset();
-            requestResponseHandler(model);
-        }    
-    }
+            using (MemoryStream newResponseBody = recyclableMemoryStreamManager.GetStream())
+            {
+                context.Response.Body = newResponseBody;
 
-    private string FormatResponse(HttpContext context, MemoryStream newResponseBody)
-    {
-        HttpRequest request = context.Request;
-        HttpResponse response = context.Response;
+                await next(context);
 
-        return $"Http Response Information: {Environment.NewLine}" +
-                $"Schema:{request.Scheme} {Environment.NewLine}" +
-                $"Host: {request.Host} {Environment.NewLine}" +
-                $"Path: {request.Path} {Environment.NewLine}" +
-                $"QueryString: {request.QueryString} {Environment.NewLine}" +
-                $"StatusCode: {response.StatusCode} {Environment.NewLine}" +
-                $"Response Body: {ReadStreamInChunks(newResponseBody)}";
-    }
+                newResponseBody.Seek(0, SeekOrigin.Begin);
+                await newResponseBody.CopyToAsync(originalBody);
 
-    private async Task<string> FormatRequest(HttpContext context)
-    {
-        HttpRequest request = context.Request;
+                newResponseBody.Seek(0, SeekOrigin.Begin);
+                model.Response = FormatResponse(context, newResponseBody);
+                model.ResponseTime = new DateTimeOffset();
+                requestResponseHandler(model);
+            }
+        }
 
-        return $"Http Request Information: {Environment.NewLine}" +
+        private string FormatResponse(HttpContext context, MemoryStream newResponseBody)
+        {
+            HttpRequest request = context.Request;
+            HttpResponse response = context.Response;
+
+            return $"Http Response Information: {Environment.NewLine}" +
                     $"Schema:{request.Scheme} {Environment.NewLine}" +
                     $"Host: {request.Host} {Environment.NewLine}" +
                     $"Path: {request.Path} {Environment.NewLine}" +
                     $"QueryString: {request.QueryString} {Environment.NewLine}" +
-                    $"Request Body: {await GetRequestBody(request)}";
-    }
-    public async Task<string> GetRequestBody(HttpRequest request)
-    {
-        request.EnableBuffering();
-        using (var requestStream = recyclableMemoryStreamManager.GetStream())
-        {
-            await request.Body.CopyToAsync(requestStream);
-            request.Body.Seek(0, SeekOrigin.Begin);
-            return ReadStreamInChunks(requestStream);
+                    $"StatusCode: {response.StatusCode} {Environment.NewLine}" +
+                    $"Response Body: {ReadStreamInChunks(newResponseBody)}";
         }
-    }
 
-    private static string ReadStreamInChunks(Stream stream)
-    {
-        stream.Seek(0, SeekOrigin.Begin);
-        string result;
-        using (var textWriter = new StringWriter())
-        using (var reader = new StreamReader(stream))
+        private async Task<string> FormatRequest(HttpContext context)
         {
-            var readChunk = new char[ReadChunkBufferLength];
-            int readChunkLength;
+            HttpRequest request = context.Request;
 
-            do
+            return $"Http Request Information: {Environment.NewLine}" +
+                        $"Schema:{request.Scheme} {Environment.NewLine}" +
+                        $"Host: {request.Host} {Environment.NewLine}" +
+                        $"Path: {request.Path} {Environment.NewLine}" +
+                        $"QueryString: {request.QueryString} {Environment.NewLine}" +
+                        $"Request Body: {await GetRequestBody(request)}";
+        }
+
+        public async Task<string> GetRequestBody(HttpRequest request)
+        {
+            request.EnableBuffering();
+            using (var requestStream = recyclableMemoryStreamManager.GetStream())
             {
-                readChunkLength = reader.ReadBlock(readChunk, 0, ReadChunkBufferLength);
-                textWriter.Write(readChunk, 0, readChunkLength);
-            } while (readChunkLength > 0);
-
-            result = textWriter.ToString();
+                await request.Body.CopyToAsync(requestStream);
+                request.Body.Seek(0, SeekOrigin.Begin);
+                return ReadStreamInChunks(requestStream);
+            }
         }
 
-        return result;
+        private static string ReadStreamInChunks(Stream stream)
+        {
+            stream.Seek(0, SeekOrigin.Begin);
+            string result;
+            using (var textWriter = new StringWriter())
+            using (var reader = new StreamReader(stream))
+            {
+                var readChunk = new char[ReadChunkBufferLength];
+                int readChunkLength;
+
+                do
+                {
+                    readChunkLength = reader.ReadBlock(readChunk, 0, ReadChunkBufferLength);
+                    textWriter.Write(readChunk, 0, readChunkLength);
+                } while (readChunkLength > 0);
+
+                result = textWriter.ToString();
+            }
+
+            return result;
+        }
     }
-
-
 }
